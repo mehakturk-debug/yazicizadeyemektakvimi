@@ -10,7 +10,6 @@
             padding: 20px;
             display: flex; 
             flex-direction: column;
-            justify-content: flex-start; 
             align-items: center; 
             min-height: 100vh; 
             background: #f8f9fa; 
@@ -19,50 +18,88 @@
 
         #baslik-alani {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             padding: 15px;
             background: #ffffff;
             border-radius: 15px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 500px;
+            max-width: 1100px;
         }
 
         h1 {
-            color: #d32f2f; /* İştah açıcı bir kırmızı tonu */
-            font-size: 20px;
+            color: #d32f2f;
+            font-size: clamp(16px, 4vw, 24px); /* Ekran küçüldükçe yazı da küçülür */
             margin: 0;
-            line-height: 1.4;
             text-transform: uppercase;
         }
 
         .alt-baslik {
             display: block;
-            font-size: 14px;
+            font-size: 18px;
             color: #555;
             margin-top: 5px;
             font-weight: bold;
         }
 
-        #icerik {
-            width: 100%;
-            max-width: 500px;
+        /* Ana Taşıyıcı: Esnek yapı */
+        .ana-konteynir {
             display: flex;
+            flex-direction: row; 
             justify-content: center;
+            align-items: flex-start; 
+            gap: 20px; 
+            width: 100%;
+            max-width: 1200px;
         }
 
-        img { 
-            width: 100%; 
-            height: auto; 
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2); 
+        /* Aşçı Kutusu - Daha Dar */
+        .asci-kutu {
+            flex: 0 0 30%; /* Genişliğin %30'unu alır, esnemez */
+            max-width: 300px;
+        }
+
+        /* Menü Kutusu - Daha Geniş */
+        .menu-kutu {
+            flex: 0 0 70%; /* Genişliğin %70'ini alır */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .gorsel {
+            width: 100%;
+            height: auto;
             border-radius: 15px;
             border: 5px solid white;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            display: block;
+        }
+
+        /* Aşçı resminin menüyle boyunu eşitlemek isterseniz */
+        .asci-resim {
+            aspect-ratio: 2/3; /* Aşçı resmini dikdörgen formda tutar */
+            object-fit: cover;
         }
 
         #hata-mesaji {
-            color: #666;
-            margin-top: 50px;
+            color: #d32f2f;
+            padding: 40px;
             text-align: center;
+            background: #fff;
+            border-radius: 15px;
+            border: 2px dashed #ccc;
+        }
+
+        /* Mobil cihazlar için (Ekran çok daralırsa alt alta geçer) */
+        @media (max-width: 768px) {
+            .ana-konteynir {
+                flex-direction: column;
+                align-items: center;
+            }
+            .asci-kutu, .menu-kutu {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
         }
     </style>
 </head>
@@ -73,28 +110,29 @@
         <span class="alt-baslik">🍽️ GÜNÜN LEZZETİ</span>
     </div>
 
-    <div id="icerik">
-        <img id="gununGorseli" src="" alt="Menü yükleniyor...">
+    <div class="ana-konteynir">
+        <div class="asci-kutu">
+            <img src="aşçı.png" class="gorsel asci-resim" alt="Aşçımız">
+        </div>
+
+        <div class="menu-kutu" id="icerik">
+            <img id="gununGorseli" class="gorsel" src="" alt="Menü yükleniyor...">
+        </div>
     </div>
 
     <script>
-        // Bugünün tarihini al (1-31 arası rakam)
         const bugun = new Date();
         const gun = bugun.getDate(); 
-        
-        // Görselin adını belirle (Örn: 24.png)
-        // Önemli: Görsellerin index.html ile aynı klasörde olmalı
         const gorselAdi = gun + ".png";
         
         const resimElementi = document.getElementById('gununGorseli');
         resimElementi.src = gorselAdi;
 
-        // Eğer o güne ait resim klasörde yoksa hata mesajı gösterir
         resimElementi.onerror = function() {
             document.getElementById('icerik').innerHTML = `
                 <div id="hata-mesaji">
-                    <h2>⚠️ Menü Henüz Hazır Değil</h2>
-                    <p>Bugünün (${gun}.png) menü görseli sisteme yüklenmemiş.</p>
+                    <h2>⚠️ Menü Görseli Bulunamadı</h2>
+                    <p>Sistemde <b>${gun}.png</b> dosyası eksik görünüyor.</p>
                 </div>`;
         };
     </script>
