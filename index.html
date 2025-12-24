@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Günün Sürprizi</title>
+    <style>
+        body { margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f0f0f0; }
+        img { max-width: 100%; height: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border-radius: 10px; }
+        #mesaj { font-family: sans-serif; text-align: center; color: #333; }
+    </style>
+</head>
+<body>
+
+    <div id="icerik">
+        <img id="gununGorseli" src="" alt="Yükleniyor...">
+    </div>
+
+    <script>
+        // Bugünün tarihini al
+        const bugun = new Date();
+        const gun = bugun.getDate(); // Ayın kaçı olduğunu alır (1-31)
+        
+        // Görselin adını belirle (Örn: 24.png)
+        const gorselAdi = gun + ".png";
+        
+        // Ekranda göster
+        const resimElementi = document.getElementById('gununGorseli');
+        resimElementi.src = gorselAdi;
+
+        // Hata kontrolü (Resim yoksa)
+        resimElementi.onerror = function() {
+            document.body.innerHTML = "<h1>Bugün için bir görsel bulunamadı!</h1>";
+        };
+    </script>
+</body>
+</html>
