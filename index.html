@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yazıcızade Günün Lezzeti</title>
+    <title>Yazıcızade Menü Rehberi</title>
     <style>
         body { 
             margin: 0; 
@@ -12,13 +12,13 @@
             flex-direction: column;
             align-items: center; 
             min-height: 100vh; 
-            background: #f8f9fa; 
+            background: #f0f2f5; 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         #baslik-alani {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             padding: 15px;
             background: #ffffff;
             border-radius: 15px;
@@ -27,44 +27,51 @@
             max-width: 1100px;
         }
 
-        h1 {
-            color: #d32f2f;
-            font-size: clamp(16px, 4vw, 24px); /* Ekran küçüldükçe yazı da küçülür */
-            margin: 0;
-            text-transform: uppercase;
+        h1 { color: #d32f2f; font-size: 20px; margin: 0; text-transform: uppercase; }
+        
+        .kontrol-paneli {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 10px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
 
-        .alt-baslik {
-            display: block;
-            font-size: 18px;
-            color: #555;
-            margin-top: 5px;
+        .nav-btn {
+            background: #d32f2f;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 50%;
+            cursor: pointer;
             font-weight: bold;
+            font-size: 18px;
         }
 
-        /* Ana Taşıyıcı: Esnek yapı */
+        .nav-btn:hover { background: #b71c1c; }
+
+        select {
+            padding: 8px 15px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
         .ana-konteynir {
             display: flex;
             flex-direction: row; 
             justify-content: center;
-            align-items: flex-start; 
             gap: 20px; 
             width: 100%;
             max-width: 1200px;
         }
 
-        /* Aşçı Kutusu - Daha Dar */
-        .asci-kutu {
-            flex: 0 0 30%; /* Genişliğin %30'unu alır, esnemez */
-            max-width: 300px;
-        }
-
-        /* Menü Kutusu - Daha Geniş */
-        .menu-kutu {
-            flex: 0 0 70%; /* Genişliğin %70'ini alır */
-            display: flex;
-            flex-direction: column;
-        }
+        .asci-kutu { flex: 0 0 25%; max-width: 250px; }
+        .menu-kutu { flex: 0 0 70%; }
 
         .gorsel {
             width: 100%;
@@ -72,34 +79,22 @@
             border-radius: 15px;
             border: 5px solid white;
             box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-            display: block;
         }
 
-        /* Aşçı resminin menüyle boyunu eşitlemek isterseniz */
-        .asci-resim {
-            aspect-ratio: 2/3; /* Aşçı resmini dikdörgen formda tutar */
-            object-fit: cover;
-        }
+        .asci-resim { aspect-ratio: 2/3; object-fit: cover; }
 
         #hata-mesaji {
-            color: #d32f2f;
-            padding: 40px;
+            padding: 60px;
             text-align: center;
             background: #fff;
             border-radius: 15px;
-            border: 2px dashed #ccc;
+            border: 3px dashed #ddd;
+            color: #888;
         }
 
-        /* Mobil cihazlar için (Ekran çok daralırsa alt alta geçer) */
         @media (max-width: 768px) {
-            .ana-konteynir {
-                flex-direction: column;
-                align-items: center;
-            }
-            .asci-kutu, .menu-kutu {
-                flex: 0 0 100%;
-                max-width: 100%;
-            }
+            .ana-konteynir { flex-direction: column; }
+            .asci-kutu, .menu-kutu { flex: 0 0 100%; max-width: 100%; }
         }
     </style>
 </head>
@@ -107,34 +102,79 @@
 
     <div id="baslik-alani">
         <h1>ÖZEL YAZICIZADE ORTAÖĞRETİM ERKEK ÖĞRENCİ PANSİYONU</h1>
-        <span class="alt-baslik">🍽️ GÜNÜN LEZZETİ</span>
+        <div id="secili-gun-metni" style="margin-top: 10px; color: #d32f2f; font-weight: bold;"></div>
+    </div>
+
+    <div class="kontrol-paneli">
+        <button class="nav-btn" onclick="degistir(-1)">❮</button>
+        <select id="gunSecici" onchange="gunSec(this.value)"></select>
+        <button class="nav-btn" onclick="degistir(1)">❯</button>
     </div>
 
     <div class="ana-konteynir">
         <div class="asci-kutu">
             <img src="aşçı.png" class="gorsel asci-resim" alt="Aşçımız">
         </div>
-
-        <div class="menu-kutu" id="icerik">
-            <img id="gununGorseli" class="gorsel" src="" alt="Menü yükleniyor...">
-        </div>
+        <div class="menu-kutu" id="menu-alani">
+            </div>
     </div>
 
     <script>
-        const bugun = new Date();
-        const gun = bugun.getDate(); 
-        const gorselAdi = gun + ".png";
-        
-        const resimElementi = document.getElementById('gununGorseli');
-        resimElementi.src = gorselAdi;
+        // Değişken ismindeki boşluğu sildim
+        let suAnkiGun = new Date().getDate(); 
 
-        resimElementi.onerror = function() {
-            document.getElementById('icerik').innerHTML = `
-                <div id="hata-mesaji">
-                    <h2>⚠️ Menü Görseli Bulunamadı</h2>
-                    <p>Sistemde <b>${gun}.png</b> dosyası eksik görünüyor.</p>
-                </div>`;
-        };
+        function dropdownDoldur() {
+            const select = document.getElementById('gunSecici');
+            for (let i = 1; i <= 31; i++) {
+                let opt = document.createElement('option');
+                opt.value = i;
+                opt.innerHTML = i + " . Günün Menüsü";
+                if(i === suAnkiGun) opt.selected = true;
+                select.appendChild(opt);
+            }
+        }
+
+        function degistir(yon) {
+            suAnkiGun += yon;
+            if (suAnkiGun > 31) suAnkiGun = 1;
+            if (suAnkiGun < 1) suAnkiGun = 31;
+            document.getElementById('gunSecici').value = suAnkiGun;
+            menuGoster(suAnkiGun);
+        }
+
+        function gunSec(gun) {
+            suAnkiGun = parseInt(gun);
+            menuGoster(suAnkiGun);
+        }
+
+        function menuGoster(gun) {
+            const menuAlani = document.getElementById('menu-alani');
+            const metinElement = document.getElementById('secili-gun-metni');
+            
+            metinElement.innerHTML = `📅 AYIN ${gun}. GÜNÜ MENÜSÜ`;
+
+            // Yeni resim elementi oluşturuyoruz
+            const img = new Image();
+            img.src = gun + ".png";
+            img.className = "gorsel";
+            
+            // Resim yüklenirken alanı temizle ve resmi ekle
+            menuAlani.innerHTML = "";
+            menuAlani.appendChild(img);
+
+            // Eğer resim yoksa hata mesajı göster
+            img.onerror = function() {
+                menuAlani.innerHTML = `
+                    <div id="hata-mesaji">
+                        <h2>⚠️ Menü Bulunamadı</h2>
+                        <p>Bugüne ait (<b>${gun}.png</b>) görseli sistemde yok.</p>
+                    </div>`;
+            };
+        }
+
+        // Sayfa açıldığında başlat
+        dropdownDoldur();
+        menuGoster(suAnkiGun);
     </script>
 </body>
 </html>
