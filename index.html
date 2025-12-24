@@ -3,34 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Günün Sürprizi</title>
+    <title>Yazıcızade Günün Lezzeti</title>
     <style>
-        body { margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f0f0f0; }
-        img { max-width: 100%; height: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border-radius: 10px; }
-        #mesaj { font-family: sans-serif; text-align: center; color: #333; }
+        body { 
+            margin: 0; 
+            padding: 20px;
+            display: flex; 
+            flex-direction: column;
+            justify-content: flex-start; 
+            align-items: center; 
+            min-height: 100vh; 
+            background: #f8f9fa; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #baslik-alani {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            color: #d32f2f; /* İştah açıcı bir kırmızı tonu */
+            font-size: 20px;
+            margin: 0;
+            line-height: 1.4;
+            text-transform: uppercase;
+        }
+
+        .alt-baslik {
+            display: block;
+            font-size: 14px;
+            color: #555;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        #icerik {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            justify-content: center;
+        }
+
+        img { 
+            width: 100%; 
+            height: auto; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2); 
+            border-radius: 15px;
+            border: 5px solid white;
+        }
+
+        #hata-mesaji {
+            color: #666;
+            margin-top: 50px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 
+    <div id="baslik-alani">
+        <h1>ÖZEL YAZICIZADE ORTAÖĞRETİM ERKEK ÖĞRENCİ PANSİYONU</h1>
+        <span class="alt-baslik">🍽️ GÜNÜN LEZZETİ</span>
+    </div>
+
     <div id="icerik">
-        <img id="gununGorseli" src="" alt="Yükleniyor...">
+        <img id="gununGorseli" src="" alt="Menü yükleniyor...">
     </div>
 
     <script>
-        // Bugünün tarihini al
+        // Bugünün tarihini al (1-31 arası rakam)
         const bugun = new Date();
-        const gun = bugun.getDate(); // Ayın kaçı olduğunu alır (1-31)
+        const gun = bugun.getDate(); 
         
         // Görselin adını belirle (Örn: 24.png)
+        // Önemli: Görsellerin index.html ile aynı klasörde olmalı
         const gorselAdi = gun + ".png";
         
-        // Ekranda göster
         const resimElementi = document.getElementById('gununGorseli');
         resimElementi.src = gorselAdi;
 
-        // Hata kontrolü (Resim yoksa)
+        // Eğer o güne ait resim klasörde yoksa hata mesajı gösterir
         resimElementi.onerror = function() {
-            document.body.innerHTML = "<h1>Bugün için bir görsel bulunamadı!</h1>";
+            document.getElementById('icerik').innerHTML = `
+                <div id="hata-mesaji">
+                    <h2>⚠️ Menü Henüz Hazır Değil</h2>
+                    <p>Bugünün (${gun}.png) menü görseli sisteme yüklenmemiş.</p>
+                </div>`;
         };
     </script>
 </body>
